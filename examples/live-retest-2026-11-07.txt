@@ -1,0 +1,255 @@
+# dotmix 0.1.0 live retest, 2026-11-07, real Nym mainnet mixnet
+# nym-socks5-client 1.1.86 (official release binary, build 2026-10-01), SOCKS5 127.0.0.1:1089, reply SURBs on.
+# Every request below left through the Nym exit gateway picked by `nym setup` (node 3165, IS); no clearnet
+# fallback exists. Wall times include a fresh mixnet stream, DoH over the mixnet, TLS and the genesis check.
+# Edits: gateway log times converted to UTC, the help text that 404 answers print is cut, and the client's
+# log path shortened to $XDG_STATE_HOME. `nym setup` ran as init, then start (see NOTES); its lines are joined.
+
+
+## 1. Mixnet client
+
+$ dotmix nym setup
+exit gateway: node 3165 (IS) perf=0.98 version=1.43.0, picked at random from 98
+id                 dotmix
+pid                1391593
+socks5             127.0.0.1:1089
+provider           HPywtv169uW6JbB6JFidww3ReaqQMjkinpSQygLAY1Lw.8YEsF7zpwyBqk8Q2Eo4uYZza4kLNgeBosweHoczB37U7@CTLwgiM4pCeD7CTRu5yqQJaVCmv6cxfKETfUL1rXHgkE
+anonymous_replies  true
+client_address     4jgVe9gXrJaiiwjWzo8eUjDLwW4kJQpczUdqSe9KtZNR.LA7Bp3Pqfa8Y1dwAXB8sCGobjAysE1LdDeUayVj3CHG@Cz4oKe8rrr7tSGdXfGLfug2WNMfD5XZtYXBtvnjmHaaJ
+gateway            Cz4oKe8rrr7tSGdXfGLfug2WNMfD5XZtYXBtvnjmHaaJ
+log                $XDG_STATE_HOME/dotmix/dotmix.log
+
+
+## 2. What the nodes see, and the CLI over the mixnet
+
+$ dotmix ip
+https://api.ipify.org sees this request coming from 185.146.234.106 (3.86s over the mixnet)
+= Nym node 3165 (IS, exit gateway: true) in the nym-api node list
+(exit 0, wall 4.2s)
+
+$ dotmix info --chain polkadot
+Polkadot: best block #33774938, finalized #33774934, runtime polkadot/2005002 (genesis 0x91b171bb15... verified)
+  via rpc.polkadot.io over the mixnet, 6.2s
+(exit 0, wall 6.2s)
+
+$ dotmix info --chain assethub
+Polkadot Asset Hub: best block #22831057, finalized #22831038, runtime statemint/2005002 (genesis 0x68d56f15f8... verified)
+  via polkadot-asset-hub-rpc.polkadot.io over the mixnet, 6.3s
+(exit 0, wall 6.3s)
+
+$ dotmix info --chain kusama
+Kusama: best block #35999060, finalized #35999057, runtime kusama/2005001 (genesis 0xb0a8d49328... verified)
+  via kusama-rpc.polkadot.io over the mixnet, 6.5s
+(exit 0, wall 6.5s)
+
+$ dotmix info --chain bittensor
+Bittensor: best block #9455465, finalized #9455463, runtime node-subtensor/488 (genesis 0x2f0555cc76... verified)
+  via entrypoint-finney.opentensor.ai over the mixnet, 6.7s
+(exit 0, wall 6.7s)
+
+$ dotmix info --chain paseo
+Paseo: best block #1839140, finalized #1839137, runtime paseo/2005005 (genesis 0x374057be67... verified)
+  via pas-rpc.stakeworld.io over the mixnet, 7.0s
+(exit 0, wall 7.0s)
+
+$ dotmix balance 13UVJyLnbVp9RBZYFwFGyDvVd1y27Tt8tkntv6Q7JVPhFsTB
+13UVJyLnbVp9RBZYFwFGyDvVd1y27Tt8tkntv6Q7JVPhFsTB on Polkadot:
+  3120.7382286359 DOT free, 0 reserved, 0 frozen, nonce 0
+  (via rpc.polkadot.io over the mixnet, 5.3s)
+13UVJyLnbVp9RBZYFwFGyDvVd1y27Tt8tkntv6Q7JVPhFsTB on Polkadot Asset Hub:
+  21456794.5505165134 DOT free, 78.99593 reserved, 0 frozen, nonce 0
+  5018983.28321 USDT (asset 1984)
+  3350156.574411 USDC (asset 1337)
+  (via polkadot-asset-hub-rpc.polkadot.io over the mixnet, 5.6s)
+(exit 0, wall 5.6s)
+
+$ dotmix rpc state_getKeysPaged 0x682a59d51ab9e48a8c8cc418ff9708d2b99d880ec681799c0cf30e8886371da9a319d0e87221ca1ee751c1529f201522c0070000 3 --chain assethub
+[
+  "0x682a59d51ab9e48a8c8cc418ff9708d2b99d880ec681799c0cf30e8886371da9a319d0e87221ca1ee751c1529f201522c007000000064a5b7db2b0c8271fe85bce78da1e08622ff9ded7476d40178685d0a0a9d28cd396472dba36eb735f48ca54a0c7d7",
+  "0x682a59d51ab9e48a8c8cc418ff9708d2b99d880ec681799c0cf30e8886371da9a319d0e87221ca1ee751c1529f201522c0070000000a713df31d7409031ebdc8b7746fa25e87ff845357b2f4b4da72237b39b7ccd0d30af14f46bbe9a8c1ac14d81b9156",
+  "0x682a59d51ab9e48a8c8cc418ff9708d2b99d880ec681799c0cf30e8886371da9a319d0e87221ca1ee751c1529f201522c0070000000d46ede6fc8b0c5452cbbe330a70526ecef2d4ebdd7ffb4b4e0e4411e8220b77695c4bd4a5440184c10605d6530ef7"
+]
+(state_getKeysPaged on assethub via polkadot-asset-hub-rpc.polkadot.io over the mixnet, 5.7s)
+(exit 0, wall 5.7s)
+
+$ dotmix submit 0x1084beefed --chain assethub
+rejected by the node: RPC error 1002: Verification Error: Runtime error: Execution failed: Execution aborted due to trap: wasm trap: wasm `unreachable` instruction executed (via polkadot-asset-hub-rpc.polkadot.io over the mixnet, 5.5s)
+(exit 1, wall 5.5s)
+
+# the same junk bytes again: the node remembers them (see NOTES)
+$ dotmix submit 0x1084beefed --chain assethub
+rejected by the node: RPC error 1012: Transaction is temporarily banned (via polkadot-asset-hub-rpc.polkadot.io over the mixnet, 5.7s)
+(exit 1, wall 5.7s)
+
+$ dotmix rpc chain_getBlockHash 1 --chain kusama
+"0xcd9b8e2fc2f57c4570a86319b005832080e0c478ab41ae5d44e23705872f5ad3"
+(chain_getBlockHash on kusama via kusama-rpc.polkadot.io over the mixnet, 5.7s)
+(exit 0, wall 5.7s)
+
+$ dotmix balance 5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw --chain bittensor
+5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw on Bittensor:
+  no account (0 TAO)
+  (via entrypoint-finney.opentensor.ai over the mixnet, 5.8s)
+(exit 0, wall 5.8s)
+
+$ dotmix submit 0x1004deadbe --chain assethub
+dotmix: this extrinsic (format v4) is not signed; pass --allow-unsigned to forward it anyway
+(exit 1, wall 0.0s)
+
+$ dotmix info --chain polkadot --rpc wss://kusama-rpc.polkadot.io
+dotmix: kusama-rpc.polkadot.io: serves a different chain (genesis 0xb0a8d493285c2df7..., want 0x91b171bb158e2d38...)
+(exit 1, wall 4.7s)
+
+$ dotmix info --chain polkadot --proxy 127.0.0.1:1
+dotmix: rpc.polkadot.io: no SOCKS5 proxy (nym-socks5-client) listening; refusing to fall back to a direct connection (127.0.0.1:1: dial tcp 127.0.0.1:1: connect: connection refused)
+(exit 1, wall 0.0s)
+
+
+## 3. probe: every built-in node, websocket and HTTPS, through the mixnet
+
+$ dotmix probe
+CHAIN             NODE                                       WEBSOCKET (wss)        TIME  HTTPS POST             TIME
+polkadot          rpc.polkadot.io                            genesis ok, #33774986  5.7s  genesis ok, #33774987  2.9s
+polkadot          polkadot-rpc.publicnode.com                genesis ok, #33774988  6.3s  genesis ok, #33774988  3.2s
+polkadot          rpc-polkadot.luckyfriday.io                genesis ok, #33774988  6.6s  genesis ok, #33774988  3.2s
+polkadot          polkadot.api.onfinality.io/public          genesis ok, #33774986  6.6s  genesis ok, #33774987  3.6s
+assethub          polkadot-asset-hub-rpc.polkadot.io         genesis ok, #22831208  6.3s  genesis ok, #22831210  3.1s
+assethub          rpc-asset-hub-polkadot.luckyfriday.io      genesis ok, #22831208  6.7s  genesis ok, #22831172  3.5s
+assethub          statemint.api.onfinality.io/public         genesis ok, #22831212  5.7s  genesis ok, #22831215  5.2s
+kusama            kusama-rpc.polkadot.io                     genesis ok, #35999109  5.7s  genesis ok, #35999109  3.4s
+kusama            kusama-rpc.publicnode.com                  genesis ok, #35999103  6.4s  genesis ok, #35999103  2.9s
+kusama            rpc-kusama.luckyfriday.io                  genesis ok, #35999104  6.1s  genesis ok, #35999105  3.6s
+kusama            kusama.api.onfinality.io/public            genesis ok, #35999104  7.0s  genesis ok, #35999105  4.3s
+kusama-assethub   kusama-asset-hub-rpc.polkadot.io           genesis ok, #23525386  8.1s  genesis ok, #23525388  3.5s
+kusama-assethub   rpc-asset-hub-kusama.luckyfriday.io        genesis ok, #23525385  6.0s  genesis ok, #23525386  3.2s
+bittensor         entrypoint-finney.opentensor.ai            genesis ok, #9455487   6.2s  genesis ok, #9455487   3.5s
+bittensor         lite.chain.opentensor.ai                   genesis ok, #9455487   6.0s  genesis ok, #9455487   3.1s
+bittensor         bittensor-finney.api.onfinality.io/public  genesis ok, #9455488   6.6s  genesis ok, #9455489   2.9s
+paseo             pas-rpc.stakeworld.io                      genesis ok, #1839186   6.3s  genesis ok, #1839186   2.5s
+paseo             paseo-rpc.n.dwellir.com                    genesis ok, #1839187   5.7s  genesis ok, #1839188   3.2s
+westend           westend-rpc.polkadot.io                    genesis ok, #33643155  5.7s  genesis ok, #33643155  3.0s
+westend-assethub  westend-asset-hub-rpc.polkadot.io          genesis ok, #19104628  7.1s  genesis ok, #19104630  3.1s
+20 of 20 nodes answered over a websocket through the mixnet, with the right genesis
+(exit 0, wall 50.2s)
+
+
+## 4. The gateway (dotmix serve --allow-origin https://polkadot.js.org)
+
+# 2026-11-07T16:39:58Z curl against the running gateway (dotmix serve, 127.0.0.1:9944)
+# (every POST below also sends -H "Content-Type: application/json" unless another type is shown)
+$ curl -d {"jsonrpc":"2.0","id":1,"method":"system_chain","params":[]} http://127.0.0.1:9944/
+{"jsonrpc":"2.0","id":1,"result":"Polkadot"}
+[HTTP 200, 3.181872s]
+
+$ curl -d {"jsonrpc":"2.0","id":1,"method":"chain_getFinalizedHead","params":[]} http://127.0.0.1:9944/assethub
+{"jsonrpc":"2.0","id":1,"result":"0xc59b2a0769a41241442a6809d2011c5bd6a34c1ae2ca82dac6dc001c3aa3062f"}
+[HTTP 200, 2.816696s]
+
+$ curl -d [{"jsonrpc":"2.0","id":1,"method":"system_chain","params":[]},{"jsonrpc":"2.0","id":2,"method":"system_version","params":[]}] http://127.0.0.1:9944/kusama
+[{"jsonrpc":"2.0","id":1,"result":"Kusama"},{"jsonrpc":"2.0","id":2,"result":"1.25.1-6ab53982513"}]
+[HTTP 200, 4.854603s]
+
+$ curl -d {"jsonrpc":"2.0","id":1,"method":"state_getStorage","params":["0x26aa394eea5630e07c48ae0c9558cef7b99d880ec681799c0cf30e8886371da95ecffd7b6c0f78751baa9d281e0bfa3a6d6f646c70792f74727372790000000000000000000000000000000000000000"]} http://127.0.0.1:9944/assethub
+{"jsonrpc":"2.0","id":1,"result":"0x000000000800000001000000030000004e4f05dc684cfa020000000000000000a0533eedb700000000000000000000000000000000000000000000000000000000000000000000000000000000000080"}
+[HTTP 200, 0.740308s]
+
+$ curl -d {"jsonrpc":"2.0","id":1,"method":"author_submitExtrinsic","params":["0x1084facade"]} http://127.0.0.1:9944/assethub
+{"jsonrpc":"2.0","id":1,"error":{"code":1002,"message":"Verification Error: Runtime error: Execution failed: Execution aborted due to trap: wasm trap: wasm `unreachable` instruction executed\nWASM backtrace:\nerror while executing at wasm backtrace:\n    0: 0x9f1e12 - asset_hub_polkadot_runtime.wasm
+[HTTP 200, 0.948185s]
+
+$ curl -d {"jsonrpc":"2.0","id":1,"method":"system_chain","params":[]} http://127.0.0.1:9944/bittensor
+{"jsonrpc":"2.0","result":"Bittensor","id":1}
+[HTTP 200, 5.090617s]
+
+$ curl -H Host: evil.example -d {"jsonrpc":"2.0","id":1,"method":"system_chain","params":[]} http://127.0.0.1:9944/
+bad Host header
+
+[HTTP 403, 0.000640s]
+
+$ curl -H Origin: https://evil.example -d {"jsonrpc":"2.0","id":1,"method":"system_chain","params":[]} http://127.0.0.1:9944/
+origin not allowed (see --allow-origin)
+
+[HTTP 403, 0.000315s]
+
+$ curl -H Origin: https://polkadot.js.org -d {"jsonrpc":"2.0","id":1,"method":"system_name","params":[]} http://127.0.0.1:9944/
+{"jsonrpc":"2.0","id":1,"result":"Parity Polkadot"}
+[HTTP 200, 0.814952s]
+
+$ curl --path-as-is -d {"jsonrpc":"2.0","id":1,"method":"system_chain","params":[]} http://127.0.0.1:9944/assethub/../../elsewhere
+dotmix gateway: Polkadot SDK JSON-RPC over the Nym mixnet (websocket or POST).  [help text, cut]
+
+[HTTP 404, 0.000471s]
+
+$ curl -d {"jsonrpc":"2.0","id":1,"method":"system_chain","params":[]} http://127.0.0.1:9944/nochain
+dotmix gateway: Polkadot SDK JSON-RPC over the Nym mixnet (websocket or POST).  [help text, cut]
+
+[HTTP 404, 0.000719s]
+
+$ curl -H Content-Type: text/plain -d {"jsonrpc":"2.0","id":1,"method":"system_chain","params":[]} http://127.0.0.1:9944/
+POST body must be application/json
+
+[HTTP 415, 0.000780s]
+
+
+# 2026-11-07T16:38:09Z @polkadot/api 16.5.6, node v26.13.0, through ws://127.0.0.1:9944
+$ node polkadotjs-client.mjs
+/assethub: connected, Polkadot Asset Hub statemint/2005002, metadata v16 loaded (14.7 s)
+assethub system.account(treasury): free 214,567,945,505,165,134 planck-free=214567945505165134 nonce 0 (0.6 s)
+assethub assets.account(1984 USDT, treasury): 5018983283210 (0.8 s)
+assethub assets.metadata(1984): USDt decimals 6 (0.9 s)
+author_submitExtrinsic(junk bytes): rejected by the node: 1002: Verification Error: Runtime error: Execution failed: Execution aborted due to trap:  (0.7 s)
+assethub new head #22831178 (0.7 s after subscribing)
+assethub new head #22831179 (2.2 s after subscribing)
+/: connected, Polkadot polkadot/2005002, metadata v16 loaded (13.9 s)
+polkadot (gateway root): Polkadot, finalized #33774978 (2.3 s)
+(exit 0)
+
+
+# 2026-11-07T16:41:08Z polkadot.js apps (https://polkadot.js.org/apps) in headless Chromium (fresh profile), RPC endpoint = the dotmix gateway; gateway started with --allow-origin https://polkadot.js.org
+$ node apps.mjs ws://127.0.0.1:9944/assethub
+page opened websocket ws://127.0.0.1:9944/assethub
+explorer loaded in 19.1 s
+explorer text: Polkadot Asset Hub statemint/2005002 #22,831,266 Accounts Network Governance Developer Settings GitHub Wiki Explorer Chain info Block details Latency Node info API stats last block 8.1 s average block time 0.000 s total issuance 1.7110 BDOT session #8,891 best 22,831,266 recent blocks No blocks avai
+block numbers on screen: 22,831,266 22,831,266
+websocket frames: 51 sent, 67 received
+other hosts the page itself fetched (not RPC): fonts.googleapis.com, fonts.gstatic.com
+(exit 0)
+(screenshot: examples/polkadotjs-apps-explorer.png)
+
+
+### gateway log for the runs above (method names only, never params)
+
+# 2026-11-07T16:38:08Z dotmix serve --allow-origin https://polkadot.js.org
+16:38:08Z dotmix gateway on ws://127.0.0.1:9944  (root = polkadot; /<chain> for the others; SOCKS5 127.0.0.1:1089)
+16:38:16Z assethub websocket -> mixnet -> polkadot-asset-hub-rpc.polkadot.io open in 4.5s
+16:38:31Z assethub websocket closed after 20s: 13 requests (state_queryStorageAt x3, state_call x2, author_submitExtrinsic x1, chain_getBlockHash x1, chain_subscribeNewHead x1, rpc_methods x1, state_getRuntimeVersion x1, state_subscribeRuntimeVersion x1, +2 more methods); 1394142 bytes down
+16:38:37Z polkadot websocket -> mixnet -> rpc.polkadot.io open in 6.1s
+16:38:47Z polkadot websocket closed after 16s: 12 requests (state_call x2, state_getRuntimeVersion x2, system_chain x2, chain_getBlockHash x1, chain_getFinalizedHead x1, chain_getHeader x1, rpc_methods x1, state_subscribeRuntimeVersion x1, +1 more methods); 916490 bytes down
+16:40:01Z polkadot POST system_chain -> mixnet -> rpc.polkadot.io HTTP 200, 44 bytes in 3.2s
+16:40:04Z assethub POST chain_getFinalizedHead -> mixnet -> polkadot-asset-hub-rpc.polkadot.io HTTP 200, 102 bytes in 2.8s
+16:40:09Z kusama POST system_chain,system_version -> mixnet -> kusama-rpc.polkadot.io HTTP 200, 99 bytes in 4.9s
+16:40:10Z assethub POST state_getStorage -> mixnet -> polkadot-asset-hub-rpc.polkadot.io HTTP 200, 198 bytes in 0.7s
+16:40:11Z assethub POST author_submitExtrinsic -> mixnet -> polkadot-asset-hub-rpc.polkadot.io HTTP 200, 1017 bytes in 0.9s
+16:40:16Z bittensor POST system_chain -> mixnet -> entrypoint-finney.opentensor.ai HTTP 200, 45 bytes in 5.1s
+16:40:17Z polkadot POST system_name -> mixnet -> rpc.polkadot.io HTTP 200, 51 bytes in 0.8s
+16:41:14Z assethub websocket -> mixnet -> polkadot-asset-hub-rpc.polkadot.io open in 2.5s
+16:41:28Z assethub websocket closed after 17s: 52 requests (state_subscribeStorage x21, state_getKeysPaged x6, chain_getHeader x5, state_getRuntimeVersion x4, state_getStorage x3, state_call x2, system_chain x2, chain_getBlock x1, +8 more methods); 2673820 bytes down
+
+
+## 5. No mixnet, no traffic
+
+# 2026-11-07T16:40:29Z a second gateway pointed at a closed SOCKS5 port (no mixnet client)
+$ dotmix serve --listen 127.0.0.1:9945 --proxy 127.0.0.1:1 &
+$ curl -d {"jsonrpc":"2.0","id":1,"method":"author_submitExtrinsic","params":["0x1084facade"]} http://127.0.0.1:9945/assethub
+{"jsonrpc":"2.0","id":null,"error":{"code":-32000,"message":"dotmix: all upstreams failed over the mixnet (no clearnet fallback): polkadot-asset-hub-rpc.polkadot.io: no SOCKS5 proxy (nym-socks5-client) listening; refusing to fall back to a direct connection (127.0.0.1:1: dial tcp 127.0.0.1:1: connect: connection refused)","data":"MixnetUnavailable"}}
+[HTTP 502, 0.002085s]
+$ curl -i -H "Upgrade: websocket" ... ws://127.0.0.1:9945/ (websocket upgrade)
+HTTP/1.1 502 Bad Gateway
+--- gateway log:
+16:40:29Z dotmix gateway on ws://127.0.0.1:9945  (root = polkadot; /<chain> for the others; SOCKS5 127.0.0.1:1)
+16:40:30Z assethub POST author_submitExtrinsic FAILED after 0.0s: polkadot-asset-hub-rpc.polkadot.io: no SOCKS5 proxy (nym-socks5-client) listening; refusing to fall back to a direct connection (127.0.0.1:1: dial tcp 127.0.0.1:1: connect: connection refused)
+16:40:31Z polkadot websocket FAILED after 0.0s: rpc.polkadot.io: no SOCKS5 proxy (nym-socks5-client) listening; refusing to fall back to a direct connection (127.0.0.1:1: dial tcp 127.0.0.1:1: connect: connection refused)
+
+# web-page origin on a websocket upgrade, against the real gateway
+$ curl -i -H "Origin: https://evil.example" -H "Upgrade: websocket" ... ws://127.0.0.1:9944/
+HTTP/1.1 403 Forbidden

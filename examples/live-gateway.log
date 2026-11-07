@@ -1,0 +1,15 @@
+# 2026-11-07T16:38:08Z dotmix serve --allow-origin https://polkadot.js.org
+16:38:08Z dotmix gateway on ws://127.0.0.1:9944  (root = polkadot; /<chain> for the others; SOCKS5 127.0.0.1:1089)
+16:38:16Z assethub websocket -> mixnet -> polkadot-asset-hub-rpc.polkadot.io open in 4.5s
+16:38:31Z assethub websocket closed after 20s: 13 requests (state_queryStorageAt x3, state_call x2, author_submitExtrinsic x1, chain_getBlockHash x1, chain_subscribeNewHead x1, rpc_methods x1, state_getRuntimeVersion x1, state_subscribeRuntimeVersion x1, +2 more methods); 1394142 bytes down
+16:38:37Z polkadot websocket -> mixnet -> rpc.polkadot.io open in 6.1s
+16:38:47Z polkadot websocket closed after 16s: 12 requests (state_call x2, state_getRuntimeVersion x2, system_chain x2, chain_getBlockHash x1, chain_getFinalizedHead x1, chain_getHeader x1, rpc_methods x1, state_subscribeRuntimeVersion x1, +1 more methods); 916490 bytes down
+16:40:01Z polkadot POST system_chain -> mixnet -> rpc.polkadot.io HTTP 200, 44 bytes in 3.2s
+16:40:04Z assethub POST chain_getFinalizedHead -> mixnet -> polkadot-asset-hub-rpc.polkadot.io HTTP 200, 102 bytes in 2.8s
+16:40:09Z kusama POST system_chain,system_version -> mixnet -> kusama-rpc.polkadot.io HTTP 200, 99 bytes in 4.9s
+16:40:10Z assethub POST state_getStorage -> mixnet -> polkadot-asset-hub-rpc.polkadot.io HTTP 200, 198 bytes in 0.7s
+16:40:11Z assethub POST author_submitExtrinsic -> mixnet -> polkadot-asset-hub-rpc.polkadot.io HTTP 200, 1017 bytes in 0.9s
+16:40:16Z bittensor POST system_chain -> mixnet -> entrypoint-finney.opentensor.ai HTTP 200, 45 bytes in 5.1s
+16:40:17Z polkadot POST system_name -> mixnet -> rpc.polkadot.io HTTP 200, 51 bytes in 0.8s
+16:41:14Z assethub websocket -> mixnet -> polkadot-asset-hub-rpc.polkadot.io open in 2.5s
+16:41:28Z assethub websocket closed after 17s: 52 requests (state_subscribeStorage x21, state_getKeysPaged x6, chain_getHeader x5, state_getRuntimeVersion x4, state_getStorage x3, state_call x2, system_chain x2, chain_getBlock x1, +8 more methods); 2673820 bytes down
